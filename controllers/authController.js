@@ -12,10 +12,15 @@ const register = async (req, res) => {
         user = new User({ username, email, password });
         await user.save();
 
-        res.status(201).render('register', { successMessage: 'User registered successfully', token });
+        res.status(201).render('login');
     } catch (error) {
-        const errors = Object.values(error.errors).map((err) => err.message);
-        res.status(400).render('register', { errors });
+        if (error.errors) {
+            const errors = Object.values(error.errors).map((err) => err.message);
+            return res.status(400).render('register', { errors });
+        } else {
+            console.error(error);
+            return res.status(500).render('register', { errorMessage: 'Server error' });
+        }
     }
 };
 
