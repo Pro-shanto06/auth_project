@@ -35,11 +35,14 @@ npm install
 
 3. **Create Environment Variables File**:
 Create a `.env` file in the server directory and add the following environment variables:
+
+```bash
 PORT=3000
 MONGODB_URI=mongodb://localhost:27017/auth_project
 JWT_SECRET=your_jwt_secret
+```
 
-4. **Start the Server**:
+5. **Start the Server**:
 ```bash
 node server.js
 ```
