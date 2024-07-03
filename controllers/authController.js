@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const handleErrors = require('../utils/errorHandler');
 
 const register = async (req, res) => {
     const { username, email, password } = req.body;
@@ -14,16 +15,9 @@ const register = async (req, res) => {
 
         res.status(201).render('login');
     } catch (error) {
-        if (error.errors) {
-            const errors = Object.values(error.errors).map((err) => err.message);
-            return res.status(400).render('register', { errors });
-        } else {
-            console.error(error);
-            return res.status(500).render('register', { errorMessage: 'Server error' });
-        }
+        handleErrors(res, error, 'register');
     }
 };
-
 
 const login = async (req, res) => {
     const { email, password } = req.body;
