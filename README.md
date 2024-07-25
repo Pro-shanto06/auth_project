@@ -22,10 +22,11 @@ This project is a Node.js application for user authentication using Express, Mon
 
 ## Installation
 
-To run the Pizza Town Pizza Restaurant locally on your machine, follow these steps:
+To run it locally on your machine, follow these steps:
 1. **Clone the repository:**
   ```bash
   git clone https://github.com/Pro-shanto06/auth_project
+  cd auth_project
    ```
 2. **Install Server Dependencies**:
 
