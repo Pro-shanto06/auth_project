@@ -60,10 +60,25 @@
             background-color: #4cae4c;
         }
 
-        .error-message {
+        .messages {
             margin-bottom: 15px;
+        }
+
+        .messages ul {
+            padding: 0;
+            list-style: none;
+        }
+
+        .messages li {
+            margin-bottom: 5px;
+        }
+
+        .error {
             color: red;
-            text-align: center;
+        }
+
+        .success {
+            color: green;
         }
 
         .register-link {
@@ -84,10 +99,14 @@
         <h1>Login</h1>
 
         <% if (typeof errorMessage !== 'undefined') { %>
-            <p class="error-message"><%= errorMessage %></p>
+            <p class="messages error"><%= errorMessage %></p>
         <% } %>
 
-        <form action="/api/auth/login" method="POST">
+        <% if (typeof successMessage !== 'undefined') { %>
+            <p class="messages success"><%= successMessage %></p>
+        <% } %>
+
+        <form action="/auth/login" method="POST">
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required>
@@ -99,7 +118,7 @@
             <button type="submit">Login</button>
         </form>
         
-        <a class="register-link" href="/api/auth/register">Don't have an account? Register here</a>
+        <a class="register-link" href="/auth/register">Don't have an account? Register here</a>
     </div>
 </body>
 </html>

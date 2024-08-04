@@ -1,8 +1,6 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const generateAuthToken = require('../utils/authToken');
-const handleErrors = require('../utils/errorHandler');
-
 
 const register = async (req, res) => {
     const { username, email, password } = req.body;
@@ -14,13 +12,17 @@ const register = async (req, res) => {
         }
 
         user = new User({ username, email, password });
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(password, salt);
         await user.save();
 
-        res.status(201).render('login');
+        res.status(201).render('login', { successMessage: 'Registration successful. Please log in.' });
     } catch (error) {
-        handleErrors(res, error, 'register');
+        if (error.name === 'ValidationError') {
+            const errors = Object.values(error.errors).map((err) => err.message);
+            return res.status(400).render('register', { errors });
+        } else {
+            console.error(error);
+            return res.status(500).render('register', { errorMessage: 'Server error. Please try again later.' });
+        }
     }
 };
 
@@ -40,29 +42,36 @@ const login = async (req, res) => {
 
         const token = generateAuthToken(user._id);
         res.cookie('token', token, { httpOnly: true });
-        res.redirect('/api/auth/profile');
+        res.redirect('/auth/profile');
     } catch (error) {
-        handleErrors(res, error, 'login');
+        console.error(error);
+        return res.status(500).render('login', { errorMessage: 'Server error. Please try again later.' });
     }
 };
 
 const profile = async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('-password');
+        if (!user) {
+            return res.status(404).render('profile', { errorMessage: 'User not found' });
+        }
         res.render('profile', { user });
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        console.error(error);
+        return res.status(500).render('profile', { errorMessage: 'Server error. Please try again later.' });
     }
 };
 
 const logout = async (req, res) => {
     try {
         res.clearCookie('token');
-        res.redirect('/');
+        res.render('login', { successMessage: 'You have been logged out successfully.' });
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        console.error(error);
+        res.status(500).json({ message: 'Server error. Please try again later.' });
     }
 };
+
 
 module.exports = {
     register,

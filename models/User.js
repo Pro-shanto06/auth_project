@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema({
     username: {
@@ -21,10 +22,24 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, 'Password is required'],
-        minlength: [6, 'Password must be at least 6 characters long'],
-    },
+        minlength: [8, 'Password must be at least 8 characters long'],
+        validate: {
+            validator: function(password) {
+                const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
+                return passwordRegex.test(password);
+            },
+            message: 'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character'
+        }
+    }
 });
 
 
+UserSchema.pre('save', async function (next) {
+    if (this.isModified('password')) {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+    }
+    next();
+});
 
 module.exports = mongoose.model('User', UserSchema);

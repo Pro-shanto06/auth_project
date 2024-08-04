@@ -12,7 +12,7 @@ app.set('view engine', 'ejs');
 app.use(cookieParser());
 
 // Routes
-app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
 
 // Home route
 app.get('/', (req, res) => {
